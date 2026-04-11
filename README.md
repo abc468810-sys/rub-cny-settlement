@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CNY-RUB Cross-Border Settlement System (Demo Version)
 
-## Getting Started
+Professional framework for Sino-Russian trade settlement, built with Next.js 14, Tailwind CSS, and Prisma.
 
-First, run the development server:
+## 🚀 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Specialized CNY-RUB Dashboard**: Real-time tracking of RMB and Ruble balances.
+- **Settlement Engine**: 
+  - Automated currency conversion (CNY to RUB).
+  - **1.5% fixed service fee** logic integrated into both frontend and backend.
+  - Live preview of estimated RUB amounts.
+- **Merchant Management**:
+  - Wallet balance monitoring (CNY & RUB).
+  - Transaction history with detailed status tracking (Requested, Processing, Settled).
+- **Admin Approval Portal**:
+  - Dedicated `/admin` route to review, approve, or reject merchant requests.
+  - Automatic balance adjustment and status updates.
+- **Modern Tech Stack**: Next.js App Router, TypeScript, Prisma ORM, Lucide Icons, and Tailwind CSS.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `src/app/dashboard`: Main dashboard and wallet views.
+- `src/app/dashboard/settlements`: Settlement request form and history.
+- `src/services/settlement.ts`: Core business logic for settlement calculation.
+- `prisma/schema.prisma`: Data models for Users, Wallets, and Transactions.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏁 Quick Start (Local Environment)
 
-## Learn More
+Follow these steps to run the demo on your machine:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Setup Database**:
+   ```bash
+   npx prisma db push
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Run Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+4. **Access the App**:
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 Business Rules
+- **Default Fee**: 1.5% of the CNY amount.
+- **Conversion**: Calculated based on a demo rate (1 CNY = 12.87 RUB).
+- **Status Workflow**: Requested → Processing → Settled.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Developed for the Cross-Border Settlement Strike Team.*

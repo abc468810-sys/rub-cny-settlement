@@ -39,3 +39,27 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# database
+prisma/dev.db
+prisma/dev.db-journal
+
+# build
+.next/
+out/
+build/
+
+# misc
+.DS_Store
+*.pem
+demo_result.html
+interactive_demo.html
+index.html
+package.json.bak

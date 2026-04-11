@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  password     String       @default("password123")
+  name         String?
+  role         String       @default("MERCHANT") // ADMIN, MERCHANT
+  kycStatus    String       @default("PENDING") // PENDING, APPROVED, REJECTED
+  wallets      Wallet[]
+  transactions Transaction[]
+  beneficiaries Beneficiary[]
+  createdAt    DateTime     @default(now())
+}
+
+model Beneficiary {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  name          String
+  accountNumber String
+  bankName      String?
+  currency      String   @default("CNY")
+  createdAt     DateTime @default(now())
+}
+
+model SystemConfig {
+  id            String   @id @default("global")
+  brandName     String   @default("TradeBridge")
+  accentColor   String   @default("#3b82f6")
+  fee           Float    @default(1.5)
+  routingPath   String   @default("MOSCOW") // MOSCOW, SHANGHAI
+  isMaintenance Boolean  @default(false)
+  advisoryText  String   @default("Node synchronization 100% complete. RUB-CNY corridors active.")
+  updatedAt     DateTime @updatedAt
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  currency  String   // CNY, RUB
+  balance   Float    @default(0.0)
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  type          String   // SETTLEMENT, DEPOSIT
+  fromCurrency  String   @default("CNY")
+  toCurrency    String   @default("RUB")
+  amount        Float    // Source amount
+  fee           Float    @default(0.0)
+  netAmount     Float    // Amount after fee
+  targetAmount  Float    @default(0.0) // Final payout amount in target currency
+  rate          Float    @default(0.0)
+  bankAccount   String?
+  contractNo    String?
+  commodityType String?
+  status        String   @default("PROCESSING") // PROCESSING, COMPLETED, REJECTED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ExchangeRate {
+  id        String   @id @default(cuid())
+  from      String
+  to        String
+  rate      Float
+  updatedAt DateTime @updatedAt
+}
