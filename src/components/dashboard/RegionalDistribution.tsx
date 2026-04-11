@@ -2,14 +2,10 @@
 
 import { motion } from 'framer-motion';
 
-interface Props {
-  accentColor?: string;
-}
-
-export default function RegionalDistribution({ accentColor = '#3b82f6' }: Props) {
+export default function RegionalDistribution() {
   const data = [
     { label: 'Moscow Hub', value: 60, color: '#000000' },
-    { label: 'Beijing Node', value: 25, color: accentColor },
+    { label: 'Beijing Node', value: 25, color: '#3b82f6' },
     { label: 'Shanghai Bridge', value: 15, color: '#94a3b8' },
   ];
 

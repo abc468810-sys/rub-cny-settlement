@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ArrowDownRight, ArrowUpRight, ExternalLink, Bell, TrendingUp, ArrowRight, ShieldCheck, Lock, Activity, Landmark, Globe, Building, Download, Code, Fingerprint, Zap, Anchor, Info } from 'lucide-react';
 import Link from 'next/link';
 import { TrendChart } from './TrendChart';
@@ -14,9 +14,8 @@ import SecurityActivity from './SecurityActivity';
 import NetworkMap from './NetworkMap';
 import NodeTelemetry from './NodeTelemetry';
 import AlertHistory from './AlertHistory';
-import RegionalDistribution from './RegionalDistribution';
-import SystemHealth from './SystemHealth';
 import MetadataInspector from '../ui/MetadataInspector';
+import RegionalDistribution from './RegionalDistribution';
 import { useNotify } from '../ui/NotificationProvider';
 import { useLanguage } from '../ui/LanguageProvider';
 
@@ -127,7 +126,7 @@ export function DashboardClient({ cnyBalance, rubBalance, settlements, currentRa
           >
             <div className="w-16 h-16 border-4 border-gray-100 border-t-black rounded-full animate-spin"></div>
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-black tracking-tighter uppercase">Preparing Ledger</h3>
+              <h3 className="text-xl font-black uppercase tracking-tighter">Preparing Ledger</h3>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Encrypting institutional data stream...</p>
             </div>
           </motion.div>
@@ -150,6 +149,7 @@ export function DashboardClient({ cnyBalance, rubBalance, settlements, currentRa
         } : {}}
       />
 
+      {/* Compliance Vault Modal Simulation */}
       <AnimatePresence>
         {showVault && (
           <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/5 backdrop-blur-2xl no-print">
