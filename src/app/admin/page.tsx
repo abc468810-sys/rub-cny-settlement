@@ -9,6 +9,8 @@ import AdminBroadcast from '@/components/ui/AdminBroadcast';
 import { redirect } from 'next/navigation';
 import { ShieldCheck, UserCheck, ArrowLeft, BarChart3, Globe, Coins, Zap } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminPage() {
   let pending;
   let users;

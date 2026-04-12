@@ -1,0 +1,70 @@
+set timeout 1200
+set host "85.239.59.236"
+set user "root"
+set pass "chNYH5.BcXgrTk"
+
+# 1. Upload the archive
+spawn scp -o StrictHostKeyChecking=no /Users/luguang/.accio/accounts/1750320224/agents/DID-DB9653-765527/project/project.tar.gz $user@$host:/root/
+expect {
+    "password:" {
+        send "$pass\r"
+        exp_continue
+    }
+    eof
+}
+
+# 2. SSH into VPS and perform setup
+spawn ssh -o StrictHostKeyChecking=no $user@$host
+expect {
+    "password:" {
+        send "$pass\r"
+        exp_continue
+    }
+    -re "root@.*" {
+        send "echo '--- STARTING SETUP ---'\r"
+        
+        # --- SETUP SWAP (2GB) ---
+        send "if \[ ! -f /swapfile \]; then fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile && echo '/swapfile none swap sw 0 0' >> /etc/fstab; fi\r"
+        
+        # --- INSTALL NODE.JS 20 ---
+        send "if ! command -v node >/dev/null 2>&1 || \[ \$(node -v | cut -d'v' -f2 | cut -d'.' -f1) -lt 20 \]; then curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs; fi\r"
+        
+        # --- INSTALL NGINX & PM2 ---
+        send "if ! command -v nginx >/dev/null 2>&1; then apt-get update && apt-get install -y nginx; fi\r"
+        send "if ! command -v pm2 >/dev/null 2>&1; then npm install -g pm2; fi\r"
+        
+        # --- DEPLOY APP ---
+        send "mkdir -p /var/www/rub-cny-settlement\r"
+        send "tar -xzf /root/project.tar.gz -C /var/www/rub-cny-settlement\r"
+        send "cd /var/www/rub-cny-settlement\r"
+        send "npm install && npx prisma generate && npm run build\r"
+        
+        # --- PM2 ---
+        send "pm2 delete rub-cny-app || true\r"
+        send "pm2 start npm --name 'rub-cny-app' -- start\r"
+        send "pm2 save\r"
+        
+        # --- NGINX CONFIG ---
+        send "cat << 'NGINX' > /etc/nginx/sites-available/default\r"
+        send "server \{\r"
+        send "    listen 80;\r"
+        send "    server_name rub2cny.ru 85.239.59.236;\r"
+        send "    location / \{\r"
+        send "        proxy_pass http://localhost:3000;\r"
+        send "        proxy_http_version 1.1;\r"
+        send "        proxy_set_header Upgrade \\\$http_upgrade;\r"
+        send "        proxy_set_header Connection 'upgrade';\r"
+        send "        proxy_set_header Host \\\$host;\r"
+        send "        proxy_cache_bypass \\\$http_upgrade;\r"
+        send "    \}\r"
+        send "\}\r"
+        send "NGINX\r"
+        
+        send "ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default\r"
+        send "nginx -t && systemctl reload nginx\r"
+        
+        send "echo '--- DEPLOYMENT COMPLETE ---'\r"
+        send "exit\r"
+    }
+}
+expect eof
