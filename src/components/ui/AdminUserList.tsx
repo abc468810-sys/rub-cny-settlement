@@ -3,7 +3,7 @@
 import { approveKyc } from '@/lib/actions';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Check, Building2, User, Eye, X, FileText, Fingerprint, Globe, Lock } from 'lucide-react';
+import { ShieldCheck, Check, Building2, User, Eye, X, FileText, Globe, Lock, Shield } from 'lucide-react';
 import { useNotify } from './NotificationProvider';
 
 interface UserItem {
@@ -148,7 +148,7 @@ export default function AdminUserList({ users }: { users: UserItem[] }) {
                       <div className="h-2.5 w-2/3 bg-gray-100 rounded"></div>
                     </div>
                     <div className="flex-1 border border-gray-50 rounded-xl overflow-hidden bg-gray-50/50 flex items-center justify-center">
-                       <Fingerprint size={64} className="text-gray-100" />
+                       <Shield size={64} className="text-gray-100" />
                     </div>
                     <div className="pt-6 border-t border-gray-50 space-y-2">
                       <p className="text-[8px] font-black uppercase text-gray-300">Authorized Official ID</p>

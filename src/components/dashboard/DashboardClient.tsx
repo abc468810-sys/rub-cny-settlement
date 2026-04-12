@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { X, ArrowDownRight, ArrowUpRight, ExternalLink, Bell, TrendingUp, ArrowRight, ShieldCheck, Lock, Activity, Landmark, Globe, Building, Download, Code, Fingerprint, Zap, Anchor, Info } from 'lucide-react';
+import { X, ArrowDownRight, ArrowUpRight, ExternalLink, Bell, TrendingUp, ArrowRight, ShieldCheck, Lock, Activity, Landmark, Globe, Building, Download, Code, Shield, Zap, Anchor, Info } from 'lucide-react';
 import Link from 'next/link';
 import { TrendChart } from './TrendChart';
 import { KycBanner } from './KycBanner';

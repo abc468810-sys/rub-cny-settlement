@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Shield, Fingerprint, Lock, Globe } from 'lucide-react';
+import { Shield, Lock, Globe } from 'lucide-react';
 
 const SECURITY_EVENTS = [
   { id: 1, event: 'Secure Login from Moscow Node', time: '14:20', type: 'AUTH' },
@@ -19,7 +19,7 @@ export default function SecurityActivity() {
           <p className="text-xl font-black text-gray-900 leading-none italic uppercase">Security Feed</p>
         </div>
         <div className="p-3 bg-white rounded-2xl text-gray-400 shadow-sm border border-gray-100 group-hover:text-blue-500 transition-colors">
-          <Fingerprint size={18} />
+          <Shield size={18} />
         </div>
       </header>
 

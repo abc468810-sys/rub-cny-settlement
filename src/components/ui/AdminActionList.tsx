@@ -3,7 +3,7 @@
 import { approveSettlement, rejectSettlement } from '@/lib/actions';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Check, X, Building2, Terminal, Info, Activity, Fingerprint } from 'lucide-react';
+import { ShieldCheck, Check, X, Building2, Terminal, Info, Activity, Shield } from 'lucide-react';
 
 export default function AdminActionList({ pending }: { pending: any[] }) {
   const [loading, setLoading] = useState<string | null>(null);
