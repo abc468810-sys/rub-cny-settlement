@@ -3,6 +3,7 @@
 import prisma from './prisma';
 import { revalidatePath } from 'next/cache';
 import { getSession, setSession, deleteSession, requireAuth, requireAdmin } from './auth';
+import { calculateSettlement } from './settlement';
 
 export async function login(email: string) {
   let user = await prisma.user.findUnique({ where: { email } });
@@ -99,12 +100,9 @@ export async function createSettlement(
   const session = await requireAuth();
   const userId = session.id;
   const baseRate = await getLatestRate(); // This is CNY to RUB
-  
+
   // We are doing RUB to CNY
-  const rate = 1 / baseRate; 
-  const fee = amount * 0.015;
-  const netAmount = amount - fee;
-  const targetAmount = netAmount * rate;
+  const { fee, netAmount, targetAmount, rate } = calculateSettlement(amount, baseRate);
 
   await prisma.$transaction(async (tx) => {
     const wallet = await tx.wallet.findFirst({
