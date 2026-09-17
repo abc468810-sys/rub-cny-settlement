@@ -1,24 +1,23 @@
 'use server';
 
+import bcrypt from 'bcryptjs';
 import prisma from './prisma';
 import { revalidatePath } from 'next/cache';
 import { getSession, setSession, deleteSession, requireAuth, requireAdmin } from './auth';
 import { calculateSettlement } from './settlement';
 
-export async function login(email: string) {
-  let user = await prisma.user.findUnique({ where: { email } });
-  
+export async function login(email: string, password: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
+
   if (!user) {
-    // For demo convenience, automatically create a user if not found
-    user = await prisma.user.create({ 
-      data: { 
-        email, 
-        name: email.split('@')[0],
-        role: email.includes('admin') ? 'ADMIN' : 'MERCHANT' 
-      } 
-    });
+    throw new Error('User not found');
   }
-  
+
+  const passwordMatches = await bcrypt.compare(password, user.password);
+  if (!passwordMatches) {
+    throw new Error('Incorrect password');
+  }
+
   await setSession(user.id);
   revalidatePath('/');
   return { success: true, role: user.role };

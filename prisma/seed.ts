@@ -1,9 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 // Fallback CNY->RUB rate, matching the fallback used in src/lib/actions.ts::getLatestRate()
 const BASE_RATE = 12.87;
 const RUB_TO_CNY_RATE = 1 / BASE_RATE;
+
+// Demo-only credentials, hashed below before being written to the DB.
+const MERCHANT_PASSWORD = 'MerchantPass123!';
+const ADMIN_PASSWORD = 'AdminPass123!';
 
 function computeSettlement(amount: number) {
   const fee = amount * 0.015;
@@ -16,12 +21,18 @@ async function main() {
   const merchantId = 'clvp1234567890';
   const adminId = 'clvpadmin0000001';
 
+  const [merchantPasswordHash, adminPasswordHash] = await Promise.all([
+    bcrypt.hash(MERCHANT_PASSWORD, 10),
+    bcrypt.hash(ADMIN_PASSWORD, 10),
+  ]);
+
   const merchant = await prisma.user.upsert({
     where: { id: merchantId },
     update: {},
     create: {
       id: merchantId,
       email: 'merchant@example.com',
+      password: merchantPasswordHash,
       name: 'Global Merchant',
       role: 'MERCHANT',
       kycStatus: 'APPROVED',
@@ -34,6 +45,7 @@ async function main() {
     create: {
       id: adminId,
       email: 'admin@tradebridge.cn',
+      password: adminPasswordHash,
       name: 'Platform Admin',
       role: 'ADMIN',
       kycStatus: 'APPROVED',
@@ -157,8 +169,8 @@ async function main() {
   });
 
   console.log('Seed finished.');
-  console.log(`Admin login: ${admin.email}`);
-  console.log(`Merchant login: ${merchant.email}`);
+  console.log(`Admin login: ${admin.email} / ${ADMIN_PASSWORD}`);
+  console.log(`Merchant login: ${merchant.email} / ${MERCHANT_PASSWORD}`);
 }
 
 main().catch(e => console.error(e)).finally(() => prisma.$disconnect());

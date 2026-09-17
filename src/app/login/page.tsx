@@ -9,6 +9,7 @@ import { useLanguage } from '@/components/ui/LanguageProvider';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { dict } = useLanguage();
@@ -17,14 +18,14 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await login(email);
+      const res = await login(email, password);
       if (res.role === 'ADMIN') {
         router.push('/admin');
       } else {
         router.push('/dashboard');
       }
     } catch (e) {
-      alert('Login failed');
+      alert(e instanceof Error ? e.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -66,8 +67,8 @@ export default function LoginPage() {
                 <Server size={12} />
                 <span>Authorized Entity Email</span>
               </label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full text-lg font-bold border-b border-gray-100 focus:border-black outline-none py-4 transition-all bg-transparent placeholder:opacity-20"
@@ -75,7 +76,22 @@ export default function LoginPage() {
                 required
               />
             </div>
-            
+
+            <div className="space-y-4">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 flex items-center space-x-2">
+                <Lock size={12} />
+                <span>Password</span>
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full text-lg font-bold border-b border-gray-100 focus:border-black outline-none py-4 transition-all bg-transparent placeholder:opacity-20"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
             <div className="p-5 bg-orange-50 border border-orange-100 rounded-2xl">
                <p className="text-[9px] font-black text-orange-600 uppercase tracking-widest leading-relaxed">
                  {dict.exclusive_notice || 'Notice: This terminal is strictly for trade-related RUB to CNY remittance. All non-trade instructions will be auto-blocked.'}
