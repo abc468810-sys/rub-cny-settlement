@@ -19,10 +19,19 @@ Professional framework for Sino-Russian trade settlement, built with Next.js 14,
 
 ## 🛠️ Project Structure
 
-- `src/app/dashboard`: Main dashboard and wallet views.
-- `src/app/dashboard/settlements`: Settlement request form and history.
-- `src/services/settlement.ts`: Core business logic for settlement calculation.
-- `prisma/schema.prisma`: Data models for Users, Wallets, and Transactions.
+- `src/app/dashboard`: Main dashboard, with sub-routes for wallets, settlements, compliance, reports, matrix, developer, and receipt views.
+- `src/app/admin`: Admin approval portal (review/approve/reject settlements, KYC, system config).
+- `src/app/login`: Login page.
+- `src/lib/actions.ts`: Core server actions — auth, settlements, wallets, beneficiaries, and system config (business logic lives here, not in a `src/services/` directory).
+- `src/lib/auth.ts`: Session/auth helpers (`requireAuth`, `requireAdmin`, session cookie handling).
+- `src/lib/prisma.ts`: Shared Prisma client instance.
+- `src/lib/dictionaries.ts`: Copy/i18n dictionary data.
+- `src/lib/utils.ts`: Small shared utility helpers.
+- `src/components/ui`: Reusable UI primitives and the settlement form.
+- `src/components/dashboard`: Dashboard-specific components (charts, network map, heatmap, etc.).
+- `src/components/layout`: Shared layout/shell components.
+- `prisma/schema.prisma`: Data models for Users, Wallets, Transactions, Beneficiaries, and SystemConfig.
+- `prisma/seed.ts`: Seed script populating demo users, wallets, settlements, and beneficiaries.
 
 ## 🏁 Quick Start (Local Environment)
 
@@ -33,17 +42,24 @@ Follow these steps to run the demo on your machine:
    npm install
    ```
 
-2. **Setup Database**:
+2. **Configure Environment**:
    ```bash
-   npx prisma db push
+   cp .env.example .env
+   # edit .env with your own DATABASE_URL
    ```
 
-3. **Run Development Server**:
+3. **Setup Database & Seed Demo Data**:
+   ```bash
+   npx prisma db push
+   npx prisma db seed
+   ```
+
+4. **Run Development Server**:
    ```bash
    npm run dev
    ```
 
-4. **Access the App**:
+5. **Access the App**:
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📝 Business Rules
