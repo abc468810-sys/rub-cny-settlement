@@ -240,9 +240,185 @@ export default function SettlementClientForm({ cnyBalance, rubBalance, initialRa
               </button>
             </form>
           </motion.div>
+        ) : step === 'risk_intercept' ? (
+          <motion.div
+            key="risk-intercept"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="space-y-12"
+          >
+            <div className="p-10 bg-red-50 border border-red-100 rounded-[2.5rem] space-y-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-4 bg-red-100 text-red-600 rounded-2xl">
+                  <ShieldAlert size={24} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-red-500">Critical Value Interception</p>
+                  <p className="text-xs font-bold text-red-400 mt-1">
+                    This instruction exceeds {fromSymbol}5,000,000 and requires manual risk review before release.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3 text-[10px] font-black uppercase tracking-widest text-red-400">
+                <AlertTriangle size={14} />
+                <span>Instruction Amount: {fromSymbol}{numAmount.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                onClick={() => setStep('input')}
+                className="flex-1 py-6 rounded-3xl text-xs font-black uppercase tracking-[0.2em] border border-gray-100 hover:border-black transition-all flex justify-center items-center space-x-3"
+              >
+                <ArrowLeft size={16} />
+                <span>Cancel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep(isHighValue ? 'security_check' : 'review')}
+                className="flex-1 bg-black text-white py-6 rounded-3xl text-xs font-black uppercase tracking-[0.2em] hover:opacity-90 transition-all flex justify-center items-center space-x-3"
+                style={{ backgroundColor: accentColor }}
+              >
+                <span>Continue</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </motion.div>
+        ) : step === 'security_check' ? (
+          <motion.div
+            key="security-check"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="space-y-12"
+          >
+            <div className="flex items-center space-x-4 bg-gray-50 p-8 rounded-[2.5rem] border border-gray-100">
+              <div className="p-4 bg-white rounded-2xl border border-gray-100 text-blue-500">
+                <KeyRound size={24} />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-900">Security Verification Required</p>
+                <p className="text-[9px] font-bold text-gray-400 mt-1 uppercase tracking-widest">
+                  Instructions above {fromSymbol}1,000,000 require a one-time security token.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSecurityVerify} className="space-y-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">One-Time Security Token</label>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="block w-full text-3xl font-light border-b border-gray-100 focus:border-black outline-none py-6 transition-all bg-transparent tracking-[0.3em] text-center"
+                  placeholder="••••••"
+                  maxLength={6}
+                  required
+                />
+              </div>
+
+              <div className="flex space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setStep('input')}
+                  className="flex-1 py-6 rounded-3xl text-xs font-black uppercase tracking-[0.2em] border border-gray-100 hover:border-black transition-all flex justify-center items-center space-x-3"
+                >
+                  <ArrowLeft size={16} />
+                  <span>Cancel</span>
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-black text-white py-6 rounded-3xl text-xs font-black uppercase tracking-[0.2em] hover:opacity-90 transition-all flex justify-center items-center space-x-3"
+                  style={{ backgroundColor: accentColor }}
+                >
+                  <span>Verify</span>
+                  <ShieldCheck size={16} />
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        ) : isVetting ? (
+          <motion.div
+            key="vetting"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="py-20 text-center space-y-8"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+              className="inline-flex p-6 bg-gray-50 rounded-full border border-gray-100 text-gray-400"
+            >
+              <Activity size={28} />
+            </motion.div>
+            <p className="text-gray-300 uppercase font-black text-xs tracking-[0.3em]">Vetting Instruction...</p>
+            <div className="max-w-xs mx-auto h-2 bg-gray-100 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full"
+                style={{ backgroundColor: accentColor, width: `${vettingProgress}%` }}
+              />
+            </div>
+          </motion.div>
         ) : (
-          /* ... Rest of the multi-step components remain similar but with trade-focused copy ... */
-          <div className="py-20 text-center text-gray-300 uppercase font-black text-xs">Vetting...</div>
+          <motion.div
+            key="review"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="space-y-12"
+          >
+            <div className="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-50 space-y-6">
+              <div className="flex justify-between items-center">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Instruction Amount</p>
+                <p className="text-sm font-black mono">{fromSymbol}{numAmount.toLocaleString()}</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Fee ({(feeRate * 100).toFixed(1)}%)</p>
+                <p className="text-sm font-black mono">{fromSymbol}{fee.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              </div>
+              <div className="flex justify-between items-center border-t border-gray-100 pt-6">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">CNY Proceeds</p>
+                <p className="text-xl font-black text-green-600 mono">{toSymbol}{targetAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              </div>
+              <div className="flex justify-between items-center border-t border-gray-100 pt-6">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Payout Account</p>
+                <p className="text-sm font-bold font-mono">{bankAccount}</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Contract No.</p>
+                <p className="text-sm font-bold font-mono">{contractNo}</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Commodity Code</p>
+                <p className="text-sm font-bold font-mono">{commodityCode}</p>
+              </div>
+            </div>
+
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                onClick={() => setStep('input')}
+                className="flex-1 py-6 rounded-3xl text-xs font-black uppercase tracking-[0.2em] border border-gray-100 hover:border-black transition-all flex justify-center items-center space-x-3"
+              >
+                <ArrowLeft size={16} />
+                <span>Back</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirm}
+                disabled={loading}
+                className="flex-1 bg-black text-white py-6 rounded-3xl text-xs font-black uppercase tracking-[0.2em] hover:opacity-90 transition-all disabled:opacity-40 flex justify-center items-center space-x-3"
+                style={{ backgroundColor: accentColor }}
+              >
+                <span>Confirm & Release</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
