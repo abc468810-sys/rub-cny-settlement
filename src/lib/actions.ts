@@ -1,6 +1,7 @@
 'use server';
 
 import bcrypt from 'bcryptjs';
+import { Prisma } from '@prisma/client';
 import prisma from './prisma';
 import { revalidatePath } from 'next/cache';
 import { getSession, setSession, deleteSession, requireAuth, requireAdmin } from './auth';
@@ -134,7 +135,7 @@ export async function createSettlement(
         status: 'PROCESSING',
       },
     });
-  });
+  }, { timeout: 20000 });
 
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/settlements');
@@ -300,19 +301,27 @@ export async function addBeneficiary(name: string, accountNumber: string, bankNa
 }
 
 export async function getSystemConfig() {
-  return await prisma.systemConfig.upsert({
-    where: { id: 'global' },
-    update: {},
-    create: { 
-      id: 'global', 
-      brandName: 'TradeBridge',
-      accentColor: '#3b82f6',
-      fee: 1.5, 
-      routingPath: 'MOSCOW', 
-      isMaintenance: false,
-      advisoryText: 'Node synchronization 100% complete. RUB-CNY corridors active.'
+  try {
+    return await prisma.systemConfig.upsert({
+      where: { id: 'global' },
+      update: {},
+      create: {
+        id: 'global',
+        brandName: 'TradeBridge',
+        accentColor: '#3b82f6',
+        fee: 1.5,
+        routingPath: 'MOSCOW',
+        isMaintenance: false,
+        advisoryText: 'Node synchronization 100% complete. RUB-CNY corridors active.'
+      }
+    });
+  } catch (e) {
+    // Concurrent first-ever call: another request's create() won the race.
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+      return await prisma.systemConfig.findUniqueOrThrow({ where: { id: 'global' } });
     }
-  });
+    throw e;
+  }
 }
 
 export async function updateSystemConfig(data: Partial<{ 
