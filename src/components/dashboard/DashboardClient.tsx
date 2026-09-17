@@ -9,7 +9,7 @@ import { KycBanner } from './KycBanner';
 import { MarketBulletins } from './MarketBulletins';
 import { SystemAudit } from './SystemAudit';
 import MonthlyVolumeAnalytics from './MonthlyVolumeAnalytics';
-import GlobalNodeHealth from './GlobalNodeHealth';
+import SystemHealth from './SystemHealth';
 import SecurityActivity from './SecurityActivity';
 import NetworkMap from './NetworkMap';
 import NodeTelemetry from './NodeTelemetry';
