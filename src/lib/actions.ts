@@ -78,11 +78,24 @@ export async function depositCurrency(amount: number, currency: 'CNY' | 'RUB') {
 }
 
 export async function createSettlement(
-  amount: number, 
-  bankAccount: string, 
-  contractNo: string, 
+  amount: number,
+  bankAccount: string,
+  contractNo: string,
   commodityType: string
 ) {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error('Invalid amount: must be a positive number');
+  }
+  if (!bankAccount || bankAccount.trim().length < 6) {
+    throw new Error('Invalid bankAccount: required, minimum 6 characters');
+  }
+  if (!contractNo || contractNo.trim().length === 0) {
+    throw new Error('Invalid contractNo: required');
+  }
+  if (!commodityType || commodityType.trim().length === 0) {
+    throw new Error('Invalid commodityType: required');
+  }
+
   const session = await requireAuth();
   const userId = session.id;
   const baseRate = await getLatestRate(); // This is CNY to RUB
