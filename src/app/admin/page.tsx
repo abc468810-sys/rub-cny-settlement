@@ -1,4 +1,4 @@
-import { getAdminPending, getAdminUsers, getSystemConfig } from '@/lib/actions';
+import { getAdminPending, getAdminUsers, getSystemConfig, getAdminStats } from '@/lib/actions';
 import Link from 'next/link';
 import AdminActionList from '@/components/ui/AdminActionList';
 import AdminUserList from '@/components/ui/AdminUserList';
@@ -11,22 +11,28 @@ import { ShieldCheck, UserCheck, ArrowLeft, BarChart3, Globe, Coins, Zap } from 
 
 export const dynamic = 'force-dynamic';
 
+function formatCompact(value: number) {
+  return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+}
+
 export default async function AdminPage() {
   let pending;
   let users;
   let config;
+  let adminStats;
   try {
     pending = await getAdminPending();
     users = await getAdminUsers();
     config = await getSystemConfig();
+    adminStats = await getAdminStats();
   } catch (e) {
     redirect('/login');
   }
 
   const stats = [
-    { label: 'Daily Flow (RUB)', value: '₽ 45.2M', trend: '+12.4%', icon: <BarChart3 size={16} /> },
-    { label: 'CNY Liquidity', value: '¥ 12.8M', trend: 'Optimal', icon: <Coins size={16} /> },
-    { label: 'Network Shards', value: '14 Active', trend: 'Sync 100%', icon: <Zap size={16} /> },
+    { label: 'Daily Flow (RUB)', value: `₽ ${formatCompact(adminStats.dailyFlowRub)}`, trend: 'Today', icon: <BarChart3 size={16} /> },
+    { label: 'CNY Liquidity', value: `¥ ${formatCompact(adminStats.cnyLiquidity)}`, trend: 'Live', icon: <Coins size={16} /> },
+    { label: 'Active Users', value: `${adminStats.activeUsers}`, trend: 'Merchants', icon: <Zap size={16} /> },
   ];
 
   return (

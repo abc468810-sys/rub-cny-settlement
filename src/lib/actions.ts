@@ -251,6 +251,33 @@ export async function getAdminUsers() {
   });
 }
 
+export async function getAdminStats() {
+  await requireAdmin();
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const todaysSettlements = await prisma.transaction.findMany({
+    where: {
+      type: 'SETTLEMENT',
+      fromCurrency: 'RUB',
+      createdAt: { gte: startOfDay },
+    },
+    select: { amount: true },
+  });
+  const dailyFlowRub = todaysSettlements.reduce((sum, t) => sum + t.amount, 0);
+
+  const cnyWallets = await prisma.wallet.findMany({
+    where: { currency: 'CNY' },
+    select: { balance: true },
+  });
+  const cnyLiquidity = cnyWallets.reduce((sum, w) => sum + w.balance, 0);
+
+  const activeUsers = await prisma.user.count({ where: { role: 'MERCHANT' } });
+
+  return { dailyFlowRub, cnyLiquidity, activeUsers };
+}
+
 export async function getBeneficiaries() {
   const session = await requireAuth();
   return await prisma.beneficiary.findMany({
